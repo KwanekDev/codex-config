@@ -19,11 +19,36 @@ foreach ($cmd in @('curl','git')) {
     Write-Host "  [BŁĄD] brak narzędzia: $cmd"; exit 1
   } else { Write-Host "  [OK] $cmd" }
 }
-if (-not (Get-Command codex -ErrorAction SilentlyContinue)) {
-  Write-Host '  [UWAGA] brak codex CLI — zainstaluj: https://chatgpt.com/codex/install.sh'
-}
 if (-not (Get-Command node -ErrorAction SilentlyContinue) -or -not (Get-Command npx -ErrorAction SilentlyContinue)) {
   Write-Host '  [UWAGA] brak Node.js/npm — MCP (github, playwright, context7, notion) nie będą działać.'
+}
+
+# --- Instalacja Codex CLI (jeśli brak) ---
+if (-not (Get-Command codex -ErrorAction SilentlyContinue)) {
+  if ($env:INSTALL_TOOLS -ne '0') {
+    Write-Host '==> Brak codex CLI — instaluję (oficjalny instalator)...'
+    try {
+      Invoke-Expression (Invoke-RestMethod 'https://chatgpt.com/codex/install.ps1')
+    } catch {
+      Write-Host '  [UWAGA] instalacja codex przez PowerShell nie powiodła się — spróbuj: curl -fsSL https://chatgpt.com/codex/install.sh | sh'
+    }
+  } else {
+    Write-Host '  [UWAGA] brak codex CLI — pomijam (INSTALL_TOOLS=0).'
+  }
+} else {
+  Write-Host "  [OK] codex: $((Get-Command codex).Source)"
+}
+
+# --- Instalacja opencodex / ocx (jeśli brak) ---
+if (-not (Get-Command ocx -ErrorAction SilentlyContinue)) {
+  if ($env:INSTALL_TOOLS -ne '0') {
+    Write-Host '==> Brak opencodex (ocx) — instaluję przez npm...'
+    try { npm install -g @bitkyc08/opencodex } catch { Write-Host '  [UWAGA] instalacja opencodex nie powiodła się.' }
+  } else {
+    Write-Host '  [UWAGA] brak opencodex — pomijam (INSTALL_TOOLS=0).'
+  }
+} else {
+  Write-Host "  [OK] ocx: $((Get-Command ocx).Source)"
 }
 
 # --- Pobierz wzorce ---

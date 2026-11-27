@@ -20,11 +20,15 @@ szybko wdrożyć na dowolnym komputerze (Linux / macOS / Windows).
 
 ## Wymagania na maszynie docelowej
 
-- **Codex CLI** — `curl -fsSL https://chatgpt.com/codex/install.sh | sh`
-  (lub aplikacja Codex/ChatGPT)
 - **git**, **curl**
-- **Node.js + npm** (do MCP przez `npx`: github, playwright, context7, notion)
-- *(opcjonalnie)* **opencodex / ocx** — jeśli chcesz proxy na `127.0.0.1:10100`
+- **Node.js + npm** (wymagane do opencodex oraz MCP przez `npx`)
+- Instalator **automatycznie zainstaluje** (jeśli ich brak):
+  - **Codex CLI** — oficjalny instalator (`https://chatgpt.com/codex/install.sh` / `install.ps1`)
+  - **opencodex / ocx** — przez `npm install -g @bitkyc08/opencodex` (proxy do modeli)
+
+> Aby **pominąć** instalację narzędzi (tylko konfiguracja), ustaw zmienną:
+> - Linux/macOS: `INSTALL_TOOLS=0 bash <(...install.sh)`
+> - Windows: `$env:INSTALL_TOOLS='0'; ... | iex`
 
 ## Instalacja — Linux / macOS
 
@@ -45,12 +49,14 @@ powershell -ExecutionPolicy Bypass -c "irm https://raw.githubusercontent.com/Kwa
 
 ## Co robi instalator
 
-1. Sprawdza wymagania (codex, git, curl, node/npm).
-2. Tworzy `~/.codex/` (lub `%USERPROFILE%\.codex\`) jeśli nie istnieje.
-3. Kopiuje `config.toml.example` → `config.toml`, podstawiając **domyślne
+1. Sprawdza wymagania (git, curl, node/npm).
+2. **Instaluje brakujące narzędzia**: Codex CLI oraz opencodex/ocx
+   (chyba że `INSTALL_TOOLS=0`).
+3. Tworzy `~/.codex/` (lub `%USERPROFILE%\.codex\`) jeśli nie istnieje.
+4. Kopiuje `config.toml.example` → `config.toml`, podstawiając **domyślne
    placeholdery** (np. `$HOME`/`%USERPROFILE%`) — żadnych Twoich danych.
-4. Opcjonalnie: `AGENTS.md` i `hooks.json` (jeśli istnieją wzorce).
-5. **Nie dotyka** `auth.json`, kluczy API ani żadnych sekretów.
+5. Opcjonalnie: `AGENTS.md` i `hooks.json` (jeśli istnieją wzorce).
+6. **Nie dotyka** `auth.json`, kluczy API ani żadnych sekretów.
 
 > ⚠️ **Ważne:** po instalacji skonfiguruj własny provider/klucz API:
 > - jeśli używasz **opencodex** (proxy), w `config.toml` zostaw

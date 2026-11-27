@@ -17,18 +17,39 @@ echo "    CODEX_HOME=$CODEX_HOME"
 
 # --- Wymagania -------------------------------------------------------------
 echo "==> Sprawdzam wymagania..."
-for cmd in curl git codex; do
+for cmd in curl git; do
   if ! command -v "$cmd" >/dev/null 2>&1; then
-    case "$cmd" in
-      codex) echo "  [UWAGA] brak codex CLI — zainstaluj: curl -fsSL https://chatgpt.com/codex/install.sh | sh";;
-      *)     echo "  [BŁĄD] brak zalecanego narzędzia: $cmd"; exit 1;;
-    esac
+    echo "  [BŁĄD] brak narzędzia: $cmd"; exit 1
   else
     echo "  [OK] $cmd"
   fi
 done
 if ! command -v node >/dev/null 2>&1 || ! command -v npx >/dev/null 2>&1; then
   echo "  [UWAGA] brak Node.js/npm — MCP (github, playwright, context7, notion) nie będą działać do czasu instalacji Node."
+fi
+
+# --- Instalacja Codex CLI (jeśli brak) --------------------------------------
+if ! command -v codex >/dev/null 2>&1; then
+  if [ "${INSTALL_TOOLS:-1}" = "1" ]; then
+    echo "==> Brak codex CLI — instaluję (oficjalny instalator)..."
+    curl -fsSL https://chatgpt.com/codex/install.sh | sh
+  else
+    echo "  [UWAGA] brak codex CLI — pomijam (INSTALL_TOOLS=0). Zainstaluj sam: curl -fsSL https://chatgpt.com/codex/install.sh | sh"
+  fi
+else
+  echo "  [OK] codex: $(command -v codex)"
+fi
+
+# --- Instalacja opencodex / ocx (jeśli brak) ---------------------------------
+if ! command -v ocx >/dev/null 2>&1; then
+  if [ "${INSTALL_TOOLS:-1}" = "1" ]; then
+    echo "==> Brak opencodex (ocx) — instaluję przez npm..."
+    npm install -g @bitkyc08/opencodex || echo "  [UWAGA] instalacja opencodex nie powiodła się (sprawdź Node/npm)."
+  else
+    echo "  [UWAGA] brak opencodex — pomijam (INSTALL_TOOLS=0)."
+  fi
+else
+  echo "  [OK] ocx: $(command -v ocx)"
 fi
 
 # --- Pobierz pliki wzorcowe -------------------------------------------------
