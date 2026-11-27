@@ -52,6 +52,43 @@ else
   echo "  [OK] ocx: $(command -v ocx)"
 fi
 
+# --- Instalacja ChatGPT App (desktop) — jeśl brak -----------------------------
+install_chatgpt_app() {
+  local arch="$(uname -m)"
+  case "$arch" in
+    x86_64) local deb_url="https://persistent.oaistatic.com/codex-app-prod/linux/deb/latest/chatgpt_amd64.deb"
+             local rpm_url="https://persistent.oaistatic.com/codex-app-prod/linux/rpm/latest/chatgpt.x86_64.rpm";;
+    aarch64|arm64) local deb_url="https://persistent.oaistatic.com/codex-app-prod/linux/deb/latest/chatgpt_arm64.deb"
+             local rpm_url="https://persistent.oaistatic.com/codex-app-prod/linux/rpm/latest/chatgpt.aarch64.rpm";;
+    *) echo "  [UWAGA] nieobsługiwana architektura ($arch) — zainstaluj ChatGPT App ręcznie."; return 1;;
+  esac
+
+  if command -v apt-get >/dev/null 2>&1; then
+    echo "==> Pobieram ChatGPT App (.deb)..."
+    curl -fsSL "$deb_url" -o /tmp/chatgpt_amd64.deb || { echo "  [BŁĄD] pobieranie nie powiodło się"; return 1; }
+    echo "==> Instaluję przez sudo apt (może poprosić o hasło)..."
+    sudo apt install -y /tmp/chatgpt_amd64.deb && rm -f /tmp/chatgpt_amd64.deb
+  elif command -v dnf >/dev/null 2>&1 || command -v yum >/dev/null 2>&1; then
+    echo "==> Pobieram ChatGPT App (.rpm)..."
+    curl -fsSL "$rpm_url" -o /tmp/chatgpt.rpm || { echo "  [BŁĄD] pobieranie nie powiodło się"; return 1; }
+    echo "==> Instaluję przez sudo dnf (może poprosić o hasło)..."
+    sudo dnf install -y /tmp/chatgpt.rpm && rm -f /tmp/chatgpt.rpm
+  else
+    echo "  [UWAGA] brak apt/dnf — zainstaluj ChatGPT App ręcznie: https://chatgpt.com/download"
+    return 1
+  fi
+}
+
+if ! command -v chatgpt >/dev/null 2>&1 && [ ! -x /usr/lib/chatgpt/ChatGPT ]; then
+  if [ "${INSTALL_APP:-1}" = "1" ]; then
+    install_chatgpt_app
+  else
+    echo "  [UWAGA] brak ChatGPT App — pomijam (INSTALL_APP=0)."
+  fi
+else
+  echo "  [OK] ChatGPT App: $(command -v chatgpt 2>/dev/null || echo /usr/lib/chatgpt/ChatGPT)"
+fi
+
 # --- Pobierz pliki wzorcowe -------------------------------------------------
 echo "==> Pobieram wzorce z GitHub..."
 for f in config.toml.example AGENTS.md.example hooks.json.example; do

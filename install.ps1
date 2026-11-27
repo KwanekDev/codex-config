@@ -51,6 +51,35 @@ if (-not (Get-Command ocx -ErrorAction SilentlyContinue)) {
   Write-Host "  [OK] ocx: $((Get-Command ocx).Source)"
 }
 
+# --- Instalacja ChatGPT App (desktop) — jeśl brak ---
+function Test-ChatGptAppInstalled {
+  if (-not (Get-Command Get-AppxPackage -ErrorAction SilentlyContinue)) { return $false }
+  $appx = Get-AppxPackage -ErrorAction SilentlyContinue | Where-Object { $_.Name -match 'OpenAI\.Codex|ChatGPT' } | Select-Object -First 1
+  if ($appx) { return $true }
+  return $false
+}
+if (-not (Test-ChatGptAppInstalled)) {
+  if ($env:INSTALL_APP -ne '0') {
+    if (Get-Command winget -ErrorAction SilentlyContinue) {
+      Write-Host '==> Brak ChatGPT App — instaluję przez winget (Microsoft Store)...'
+      winget install -e --id OpenAI.Codex -s msstore --accept-package-agreements --accept-source-agreements 2>$null
+      if ($LASTEXITCODE -ne 0) {
+        Write-Host '  [INFO] próbuję alternatywnego ID (ChatGPT)...'
+        winget install -e --id ChatGPT -s msstore --accept-package-agreements --accept-source-agreements 2>$null
+      }
+      if (-not (Test-ChatGptAppInstalled)) {
+        Write-Host '  [UWAGA] instalacja przez winget nie powiodła się — zainstaluj ręcznie: https://chatgpt.com/download'
+      }
+    } else {
+      Write-Host '  [UWAGA] brak winget — zainstaluj ChatGPT App ręcznie: https://chatgpt.com/download'
+    }
+  } else {
+    Write-Host '  [UWAGA] brak ChatGPT App — pomijam (INSTALL_APP=0).'
+  }
+} else {
+  Write-Host '  [OK] ChatGPT App (zainstalowana)'
+}
+
 # --- Pobierz wzorce ---
 Write-Host '==> Pobieram wzorce z GitHub...'
 $tmp = Join-Path $env:TEMP ("codex-config-" + [guid]::NewGuid().ToString('N'))

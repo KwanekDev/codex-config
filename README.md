@@ -25,10 +25,13 @@ szybko wdrożyć na dowolnym komputerze (Linux / macOS / Windows).
 - Instalator **automatycznie zainstaluje** (jeśli ich brak):
   - **Codex CLI** — oficjalny instalator (`https://chatgpt.com/codex/install.sh` / `install.ps1`)
   - **opencodex / ocx** — przez `npm install -g @bitkyc08/opencodex` (proxy do modeli)
+  - **ChatGPT App (desktop)** — na Linux (.deb/.rpm z oficjalnego CDN) lub przez
+    winget/Microsoft Store na Windows
 
-> Aby **pominąć** instalację narzędzi (tylko konfiguracja), ustaw zmienną:
-> - Linux/macOS: `INSTALL_TOOLS=0 bash <(...install.sh)`
-> - Windows: `$env:INSTALL_TOOLS='0'; ... | iex`
+> Aby pominąć instalację **narzędzi CLI** (tylko konfiguracja), ustaw zmienną
+> `INSTALL_TOOLS=0` (Windows: `$env:INSTALL_TOOLS='0'`).
+> Aby pominąć instalację **ChatGPT App**, ustaw `INSTALL_APP=0`
+> (Windows: `$env:INSTALL_APP='0'`).
 
 ## Instalacja — Linux / macOS
 
