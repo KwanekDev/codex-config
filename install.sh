@@ -79,14 +79,24 @@ install_chatgpt_app() {
   fi
 }
 
-if ! command -v chatgpt >/dev/null 2>&1 && [ ! -x /usr/lib/chatgpt/ChatGPT ]; then
+chatgpt_app_installed() {
+  # niezawodna detekcja zrealizowanej aplikacji (nie po PATH — tam może być np. npm "chatgpt")
+  if command -v dpkg >/dev/null 2>&1 && dpkg -s chatgpt >/dev/null 2>&1; then return 0; fi
+  if command -v rpm >/dev/null 2>&1 && rpm -q chatgpt >/dev/null 2>&1; then return 0; fi
+  if command -v pacman >/dev/null 2>&1 && pacman -Q chatgpt-desktop >/dev/null 2>&1; then return 0; fi
+  [ -x /usr/lib/chatgpt/ChatGPT ] && return 0
+  [ -x /opt/OpenAI/ChatGPT ] && return 0
+  return 1
+}
+
+if ! chatgpt_app_installed; then
   if [ "${INSTALL_APP:-1}" = "1" ]; then
     install_chatgpt_app
   else
     echo "  [UWAGA] brak ChatGPT App — pomijam (INSTALL_APP=0)."
   fi
 else
-  echo "  [OK] ChatGPT App: $(command -v chatgpt 2>/dev/null || echo /usr/lib/chatgpt/ChatGPT)"
+  echo "  [OK] ChatGPT App (zainstalowana)"
 fi
 
 # --- Pobierz pliki wzorcowe -------------------------------------------------
