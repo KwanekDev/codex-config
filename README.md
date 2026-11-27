@@ -33,6 +33,38 @@ szybko wdrożyć na dowolnym komputerze (Linux / macOS / Windows).
 > Aby pominąć instalację **ChatGPT App**, ustaw `INSTALL_APP=0`
 > (Windows: `$env:INSTALL_APP='0'`).
 
+## ChatGPT App (desktop) — ważne informacje
+
+Instalator próbuje zainstalować **ChatGPT App** (aplikację desktopową z Codexem)
+obok CLI. Detekcja opiera się na **faktycznych pakietach** (`dpkg -s chatgpt`,
+`rpm -q chatgpt`, `pacman -Q chatgpt-desktop`) oraz standardowych lokalizacjach
+(`/usr/lib/chatgpt/ChatGPT`, `/opt/OpenAI/ChatGPT`) — **nie** na komendzie
+`chatgpt` z PATH, bo tam może być niepowiązany pakiet npm o tej samej nazwie.
+
+### Gdy instalator twierdzi, że app „jest”, a jej nie ma
+- Sprawdź, czy w PATH nie siedzi niepowiązany pakiet: `which chatgpt`
+- Sprawdź pakiet: `dpkg -s chatgpt` / `rpm -q chatgpt`
+- Jeśli faktycznie jej brak, uruchom instalator od nowa (już z poprawioną
+  detekcją), ewentualnie z `INSTALL_APP=1`.
+
+### Ręczna instalacja (fallback)
+Jeśli automatyczna instalacja zawiedzie (brak sudo, brak apt/dnf, nieobsługiwana
+architektura), pobierz odpowiedni pakiet ze strony `https://chatgpt.com/download`
+lub bezpośrednio z oficjalnego CDN OpenAI:
+
+- Ubuntu/Debian x64 (AMD64): `…/linux/deb/latest/chatgpt_amd64.deb`
+- Ubuntu/Debian ARM64: `…/linux/deb/latest/chatgpt_arm64.deb`
+- Fedora x64: `…/linux/rpm/latest/chatgpt.x86_64.rpm`
+- Fedora ARM64: `…/linux/rpm/latest/chatgpt.aarch64.rpm`
+
+Następnie zainstaluj w standardowy sposób (`sudo apt install ./…deb` /
+`sudo dnf install ./…rpm`).
+
+### Windows
+Aplikacja instalowana z Microsoft Store przez `winget` (id `OpenAI.Codex`,
+fallback `ChatGPT`). Gdy winget zawiedzie — pobierz ze sklepu Microsoft lub
+z `https://chatgpt.com/download`.
+
 ## Instalacja — Linux / macOS
 
 ```bash
