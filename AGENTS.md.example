@@ -1,0 +1,57 @@
+# Globalne instrukcje (Codex, user-level) — WZORZEC
+
+> Publiczny szablon. Zastąp własnymi preferencjami; nie zawiera danych
+> osobowych (e-mail, konta, ścieżki użytkownika).
+
+## Zachowanie
+- Odpowiadaj w języku wybranym przez użytkownika (np. polski); kod
+  i dokumentacja techniczna — po angielsku.
+- Zachowuj się naturalnie: zwięźle, bez ceremoniału; pytaj tylko,
+  gdy to niezbędne.
+
+## Środowisko (przykład — zweryfikuj na swojej maszynie)
+- OS: wg maszyny (Windows/Linux/macOS).
+- Narzędzia: Node.js, npm, pnpm, Git, gh (GitHub CLI), Vercel CLI,
+  playwright-cli.
+- MCP: playwright, github oraz inne wg `config.toml`.
+
+## Stack domyślny (fullstack)
+- Next.js App Router + TypeScript strict; React Server Components domyślnie;
+  "use client" tylko gdy konieczne.
+- Baza: Supabase (Postgres, Auth, Storage, Realtime).
+- Deploy: Vercel; repozytorium: GitHub + GitHub Actions; PR-y małe,
+  z opisem wg wzorca.
+- Testy: typecheck, lint, unit/integration, build produkcyjny,
+  Playwright dla UI.
+
+## Precedencja skilli (przykład)
+- Design/UI: trzymaj się jednego, spójnego stylu; nie łącz konkurujących
+  stylów bez wyraźnego życzenia użytkownika.
+- Backend/bezpieczeństwo: stosuj standardy backendowe + threat-model
+  przy każdej zmianie dotykającej auth, secrets lub danych użytkowników.
+- Biznes: b2b-trade przy handlu B2B; startup-softwarehouse przy wycenach
+  /propozycjach/pracy agencyjnej.
+- Biuro: documents, spreadsheets, presentations, pdf, template-creator.
+
+## Perspektywa / outbound (przykład)
+- Gotowe narzędzia: prospecting + cold-email.
+- Priorytet oferty: aplikacje webowe (CRM / Dashboard / TMS / ERP);
+  strony i redesign drugorzędnie.
+- Wykluczenia (dostosuj): duże korporacje, sektor publiczny, fundacje,
+  non-profit, kliniki.
+- Wyszukiwanie: tylko publiczne kanały; bez scrapowania.
+- RODO: dla każdego kontaktu zapisuj źródło i datę; zawsze dawaj możliwość
+  rezygnacji; używaj tylko publicznych kanałów biznesowych.
+
+## Zasady pracy
+- Nigdy nie commituj, pushuj, merge'uj ani deployuj bez wyraźnej instrukcji
+  użytkownika.
+- Czytaj istniejące zmiany przed edycją; utrzymuj małe, logiczne zmiany;
+  sprawdzaj diff przed zakończeniem.
+- Chroń sekrety; waliduj inputy; nigdy nie commituj `.env` ani poświadczeń.
+- Przy dłuższej pracy raportuj postęp etapami.
+
+## Autoryzacje (uruchamiane ręcznie)
+- `gh auth login`
+- `vercel login`
+- `codex mcp login vercel` (opcjonalnie)
