@@ -72,10 +72,9 @@ try {
 
   # Wykryj node_repl (typowe lokalizacje)
   $nodeReplBin = $null
-  $searchRoots = @(
-    (Join-Path $env:LOCALAPPDATA 'OpenAI\Codex'),
-    'C:\Program Files\WindowsApps'
-  )
+  $searchRoots = @()
+  if ($env:LOCALAPPDATA) { $searchRoots += (Join-Path $env:LOCALAPPDATA 'OpenAI\Codex') }
+  $searchRoots += 'C:\Program Files\WindowsApps'
   foreach ($root in $searchRoots) {
     if (Test-Path $root) {
       $hit = Get-ChildItem -Path $root -Recurse -Filter 'node_repl*' -ErrorAction SilentlyContinue | Where-Object { $_.Name -match 'node_repl' } | Select-Object -First 1
@@ -93,8 +92,10 @@ try {
     $content = [regex]::Replace($content, '(?ms)\[mcp_servers\.node_repl\].*?(?=\[mcp_servers\.|$)', '')
   }
 
-  $codexCli = (Get-Command codex -ErrorAction SilentlyContinue)
-  $content = $content.Replace('<CODEX_CLI_PATH>', if ($codexCli) { $codexCli.Source.Replace('\','/') } else { 'codex' })
+  $codexCli = Get-Command codex -ErrorAction SilentlyContinue
+  $codexCliPath = 'codex'
+  if ($codexCli) { $codexCliPath = $codexCli.Source.Replace('\','/') }
+  $content = $content.Replace('<CODEX_CLI_PATH>', $codexCliPath)
   Set-Content -Path $cfg -Value $content -Encoding UTF8
   Write-Host "  [OK] zapisano $cfg"
 
